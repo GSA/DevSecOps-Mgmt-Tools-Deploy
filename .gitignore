@@ -1,0 +1,11 @@
+# Ansible
+*.retry
+secrets.yml
+tests/roles/
+
+## Terraform ##
+*.tfvars
+# Compiled files
+*.tfstate*
+# Module directory
+.terraform/
