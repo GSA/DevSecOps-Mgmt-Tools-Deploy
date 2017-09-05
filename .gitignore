@@ -1,7 +1,16 @@
 # Ansible
-*.retry
+ansible/**/*.retry
+ansible/group_vars/*
+ansible/roles/external/*
+ansible/ssh.cfg
+ansible/src/
+ansible/tmp/*
+!ansible/tmp/.keep
 secrets.yml
-tests/roles/
+vault_pass.txt
+*.pem
+~$*
+*.pyc
 
 ## Terraform ##
 *.tfvars

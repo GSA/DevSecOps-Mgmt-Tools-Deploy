@@ -1,0 +1,63 @@
+# Duplicate this file and name it "terraform.tfvars". Make your modifications below.
+#
+# Remote state information is here. This refers to the terraform state bucket/key that refers to the infrastructure you wish to deploy this instance into.
+# Types: strings
+remote_state_backend_type = "s3"
+remote_state_backend_bucket = "gsa-devsecops-infrastructure-tf-state"
+remote_state_backend_key = "terraform/terraform.tfstate"
+
+# AWS region
+region = "us-east-1"
+
+# SSH key name to use (must already exist in the AWS account). The keyfile MUST be added to the ssh agent on the machine executing this code.
+key_name = "jmiller-personal"
+
+# Here, you can specify a VPC ID. If you're using the remote backend of an infrastructure, then specify the terraform backend of the infrastructure in the above "remote_state" variables, then leave this blank. If left == "" it will default to remote state_mgmt_vpc_id variable from the remote state. Type: string
+sg_vpc_id = ""
+
+# Here, you can specify a subnet ID. Unless you're doing anything fancy, make sure you're hooking up a public subnet or put an elastic IP on the instance after the templates finish. A public subnet will usually assign a public IP address automatically. If you're using the remote backend of an infrastructure, then specify the terraform backend of the infrastructure in the above "remote_state" variables, then leave this blank. If left == "" it will default to the first public subnet listed in the remote mgmt_public_subnet_ids variable from the remote state. Type: string
+
+instance_subnet_id = ""
+
+# Security group name (will be created)
+sg_name = "sg_jenkins"
+
+# CIDRs to allow to connect to the web ports (80 and 443) - type: list
+http_cidrs = ["0.0.0.0/0"]
+
+# CIDRs to allow to connect to ssh port (22) - type: list
+ssh_cidrs = ["0.0.0.0/0"]
+
+# Name of the EC2 instance
+jenkins_name = "jenkins"
+
+# AMI ID to use - the AMI must exist
+ami = "ami-a8d369c0"
+
+# Instance type for the instance you want
+instance_type = "t2.micro"
+
+# If you want to use an IAM profile name, create it in your infrastructure and put the name of the IAM profile here.
+iam_instance_profile_name = ""
+
+# Login for the initial user on the EC2 instance
+vm_user = "ec2-user"
+
+# Remote state information is here. This refers to the terraform state bucket/key that refers to the infrastructure you wish to deploy this instance into.
+remote_state_backend_type = "s3"
+remote_state_backend_bucket = "gsa-devsecops-infrastructure-tf-state"
+remote_state_backend_key = "terraform/terraform.tfstate"
+region = "us-east-1"
+jenkins_key_name = "jmiller-personal"
+# TODO: Document - if left "" it will default to remote state_mgmt_vpc_id
+sg_vpc_id = ""
+jenkins_sg_name = "sg_jenkins"
+jenkins_http_cidrs = ["0.0.0.0/0"]
+jenkins_ssh_cidrs = ["0.0.0.0/0"]
+jenkins_name = "jenkins"
+jenkins_ami_id = "ami-a8d369c0"
+jenkins_instance_type = "t2.micro"
+jenkins_iam_instance_profile_name = ""
+# TODO: Document - if left "" it will default to remote mgmt_public_subnet_ids
+jenkins_instance_subnet_id = ""
+jenkins_vm_user = "ec2-user"
