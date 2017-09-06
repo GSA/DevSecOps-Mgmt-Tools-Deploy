@@ -1,11 +1,11 @@
 ---
-- hosts: jenkins
+- hosts: devsecops_mgmt_jenkins_master_eip
   become: true
   name: Set up Jenkins
   # TODO: Vars are not being read automatically via hosts, so declaring them manually. Shouldn't have to do this. Jenkins-specific vars do not belong in /group_vars/all since this repo is for more than just Jenkins.
   vars_files:
-    - ../group_vars/jenkins/vars.yml
-    - ../group_vars/jenkins/vault.yml
+    - ../group_vars/devsecops_mgmt_jenkins_master_eip/vars.yml
+    - ../group_vars/devsecops_mgmt_jenkins_master_eip/vault.yml
   pre_tasks:
     - set_fact:
         jenkins_external_hostname: "{{ inventory_hostname }}"

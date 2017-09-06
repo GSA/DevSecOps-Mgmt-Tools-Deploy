@@ -24,10 +24,10 @@ ansible: install_roles init plan apply install_jenkins
 debug: install_roles init plan apply install_jenkins_debug
 
 install_jenkins:
-	cd $(PLAYBOOK_DIR) && TF_STATE=../../$(TERRAFORM_DIR)/terraform.tfstate ansible-playbook --inventory-file=$(INVENTORY_PATH) --become --user=$(SSH_USER) jenkins.yml --vault-password-file .vault_pass.txt
+	cd $(PLAYBOOK_DIR) && TF_STATE=../../$(TERRAFORM_DIR)/terraform.tfstate ansible-playbook -i $(INVENTORY_PATH) --become --user=$(SSH_USER) jenkins-master.yml --vault-password-file .vault_pass.txt
 
 install_jenkins_debug:
-	cd $(PLAYBOOK_DIR) && TF_STATE=../../$(TERRAFORM_DIR)/terraform.tfstate ansible-playbook -vvvv --inventory-file=$(INVENTORY_PATH) --become --user=$(SSH_USER) jenkins.yml --vault-password-file .vault_pass.txt
+	cd $(PLAYBOOK_DIR) && TF_STATE=../../$(TERRAFORM_DIR)/terraform.tfstate ansible-playbook -vvvv -i $(INVENTORY_PATH) --become --user=$(SSH_USER) jenkins-master.yml --vault-password-file .vault_pass.txt
 
 destroy:
 	cd ../$(TERRAFORM_DIR) && terraform destroy

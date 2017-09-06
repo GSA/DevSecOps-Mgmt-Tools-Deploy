@@ -26,3 +26,22 @@ resource "aws_eip" "devsecops_mgmt_jenkins_master_eip" {
   vpc = true
   instance = "${module.devsecops_mgmt_jenkins_master_instance.instance_id}"
 }
+
+resource "null_resource" "eip_connection_test" {
+  triggers {
+    eip = "${aws_eip.devsecops_mgmt_jenkins_master_eip.public_ip}"
+  }
+
+  connection {
+      host = "${aws_eip.devsecops_mgmt_jenkins_master_eip.public_ip}"
+      user = "${var.jenkins_vm_user}"
+      agent = true
+  }
+
+  # force Terraform to wait until a connection can be made, so that Ansible doesn't fail when trying to provision
+  provisioner "remote-exec" {
+    inline = [
+      "echo 'Remote execution to Elastic IP address succeeded.'"
+    ]
+  }
+}
