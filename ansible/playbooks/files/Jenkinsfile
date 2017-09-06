@@ -1,0 +1,22 @@
+#!groovy
+
+pipeline {
+  agent any
+
+  stages {
+    stage('Setup') {
+      steps {
+        git 'https://github.com/ansible/tower-example.git'
+        sh 'ansible --version'
+      }
+    }
+
+    stage('Provision') {
+      steps {
+        ansiColor('xterm') {
+          ansiblePlaybook playbook: 'helloworld.yml', colorized: true
+        }
+      }
+    }
+  }
+}

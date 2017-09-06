@@ -7,7 +7,7 @@ ansible/src/
 ansible/tmp/*
 !ansible/tmp/.keep
 secrets.yml
-vault_pass.txt
+.vault_pass.txt
 *.pem
 ~$*
 *.pyc
