@@ -22,7 +22,7 @@ module "devsecops_mgmt_jenkins_master_instance" {
 }
 
 # TODO: Need to be able to assign an EIP to the instance, rather than a public IP coming off the subnet
-# resource "aws_eip" "devsecops_mgmt_jenkins_master_eip" {
-#   vpc = true
-#   instance = "${module.devsecops_mgmt_jenkins_master_instance}"
-# }
+resource "aws_eip" "devsecops_mgmt_jenkins_master_eip" {
+  vpc = true
+  instance = "${module.devsecops_mgmt_jenkins_master_instance.instance_id}"
+}
