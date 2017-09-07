@@ -82,8 +82,10 @@ If youâ€™ve already deployed the DevSecOps-Infrastructure repo, chances are youâ
 
     Note that the directory "devsecops_mgmt_jenkins_master_eip" is set to this name to target the Jenkins master host that will be created. When the Ansible playbook is executed, terraform-inventory is called against the terraform.tfstate backend to obtain information about the host that was deployed. This keyboard is used to identify the instance that was created for Ansible to install Jenkins. You may wish to modify the playbook to meet your requirements.
 
-    Fill out the files with the following data:
+    Fill out the file with the following data:
 
+    ````
+    # group_vars/devsecops_mgmt_jenkins_master_eip/vars.yml
     jenkins_external_hostname: <some-fqdn-hostname>
     jenkins_ssh_key_passphrase: "{{ vault_jenkins_ssh_key_passphrase }}"
     jenkins_ssh_private_key_data: "{{ vault_jenkins_ssh_private_key_data }}"
@@ -91,9 +93,10 @@ If youâ€™ve already deployed the DevSecOps-Infrastructure repo, chances are youâ
     ssl_certs_local_privkey_data: "{{ vault_ssl_certs_local_privkey_data }}"
     jenkins_admin_username: <username for the admin user in web interface>
     jenkins_admin_password: "{{vault_jenkins_admin_password}}"
-    jenkins_ssh_user: jenkins
+    jenkins_ssh_user: <username for ssh user>
     jenkins_ssh_public_key_data: |
     <public-key-data-from-above-steps>
+    ````
 
     Note the use of variables preceded by "vault." These variables must be defined in another file in this same directory. Create a new file called "vault.yml" with ansible-vault:
 
@@ -101,8 +104,9 @@ If youâ€™ve already deployed the DevSecOps-Infrastructure repo, chances are youâ
     ansible-vault create vault.yml
     ````
 
-    This command will ask for a password to encrypt the file and launch a text editor (likely vi). Fill out the variables like the example below. This file 
+    This command will ask for a password to encrypt the file and launch a text editor (likely vi). Fill out the variables like the example below.
 
+    ````
     # group_vars/devsecops_mgmt_jenkins_master_eip/vault.yml (encrypted)
     vault_jenkins_ssh_key_passphrase: ...(if one was used)
     vault_jenkins_ssh_private_key_data: |
@@ -118,6 +122,7 @@ If youâ€™ve already deployed the DevSecOps-Infrastructure repo, chances are youâ
       ...(paste SSL certificate key info here)
       -----END RSA PRIVATE KEY-----
     vault_jenkins_admin_password: <type a password here>
+    ````
 
     Save the file in the text editor and then verify the encryption.
 
