@@ -32,13 +32,12 @@ If you’ve already deployed the DevSecOps-Infrastructure repo, chances are you�
     * [Ansible](http://www.ansible.com/)
     * [Terraform-Inventory](https://github.com/adammck/terraform-inventory)
          
-1. Set up the Terraform backend for this deployment. Note that this is a different backend from others. We’ll refer to the remote state backend later.
+1. Set up the Terraform backend for this deployment. Note that this is a different backend from others. We’ll refer to the remote state backend later. You will need to replace your bucket name with something unique, because bucket names must be unique per-region. If you get an error that the bucket name is not available, then your choice was not unique. Remember this bucket name, you’ll need it later.
 
     ```sh
     aws s3api create-bucket —bucket <your_unique_bucket_name>
     aws s3api put-bucket-versioning —<your_unique_bucket_name> —versioning-configuration Status=Enabled
     ```
-    NOTE: You will need to replace your bucket name with something unique, because bucket names must be unique per-region. If you get an error that the bucket name is not available, then your choice was not unique. Remember this bucket name, you’ll need it later.
 
 1. Create the Terraform variables file.
 
@@ -49,7 +48,80 @@ If you’ve already deployed the DevSecOps-Infrastructure repo, chances are you�
     ```
 
 1. Fill out [`terraform.tfvars`](terraform/terraform.tfvars.example). Mind the variable types and follow the noted rules. Defaults are provided in [`vars.tfvars`](Terraform/vars.tfvars) if you need examples or want to see where values are coming from.
+
 1. Fill out [‘backends.tfvars’](terraform/backends.tfvars.example). The “bucket” parameter *must* match the bucket name you used in the AWS CLI command above, otherwise terraform will throw an error on the init command.
+
+1. Set up an [Ansible Vault](https://docs.ansible.com/ansible/playbooks_vault.html) with values that are secret and should not be stored in plain text on disk. Follow these steps if you wish to keep things as out of the box as possible. If you use different filenames, you will need to modify the Makefile.
+
+* Generate an SSH key.
+
+    ```sh
+    ssh-keygen -t rsa -b 4096 -f temp.key -C "group-email+jenkins@some.gov"
+    # enter a passphrase - store in Vault as vault_jenkins_ssh_key_passphrase (see below)
+
+    cat temp.key
+    # store in Vault as vault_jenkins_ssh_private_key_data (see below)
+
+    cat temp.key.pub
+    # store as jenkins_ssh_public_key_data (see below)
+
+    rm temp.key*
+    ```
+
+* Generate a self-signed SSL certificate or get one. You will need the private key and the certificate file to paste into the vault.
+
+* Set up the required variables files that are specific to Jenkins/Ansible. Create the following directories:
+
+    ````
+    /ansible/group_vars
+                |
+                /all
+                |
+                /devsecops_mgmt_jenkins_master_eip
+    ````
+
+    Note that the directory "devsecops_mgmt_jenkins_master_eip" is set to this name to target the Jenkins master host that will be created. When the Ansible playbook is executed, terraform-inventory is called against the terraform.tfstate backend to obtain information about the host that was deployed. This keyboard is used to identify the instance that was created for Ansible to install Jenkins. You may wish to modify the playbook to meet your requirements.
+
+    Fill out the files with the following data:
+
+    jenkins_external_hostname: <some-fqdn-hostname>
+    jenkins_ssh_key_passphrase: "{{ vault_jenkins_ssh_key_passphrase }}"
+    jenkins_ssh_private_key_data: "{{ vault_jenkins_ssh_private_key_data }}"
+    ssl_certs_local_cert_data: "{{ vault_ssl_certs_local_cert_data }}"
+    ssl_certs_local_privkey_data: "{{ vault_ssl_certs_local_privkey_data }}"
+    jenkins_admin_username: <username for the admin user in web interface>
+    jenkins_admin_password: "{{vault_jenkins_admin_password}}"
+    jenkins_ssh_user: jenkins
+    jenkins_ssh_public_key_data: |
+    <public-key-data-from-above-steps>
+
+    Note the use of variables preceded by "vault." These variables must be defined in another file in this same directory. Create a new file called "vault.yml" with ansible-vault:
+
+    ````
+    ansible-vault create vault.yml
+    ````
+
+    This command will ask for a password to encrypt the file and launch a text editor (likely vi). Fill out the variables like the example below. This file 
+
+    # group_vars/devsecops_mgmt_jenkins_master_eip/vault.yml (encrypted)
+    vault_jenkins_ssh_key_passphrase: ...(if one was used)
+    vault_jenkins_ssh_private_key_data: |
+      -----BEGIN RSA PRIVATE KEY-----
+      ...(key data from above procedures)
+      -----END RSA PRIVATE KEY-----
+    vault_ssl_certs_local_cert_data: |
+      -----BEGIN CERTIFICATE-----
+      ...(paste SSL certificate info here)
+      -----END CERTIFICATE-----
+    vault_ssl_certs_local_privkey_data: |
+      -----BEGIN RSA PRIVATE KEY-----
+      ...(paste SSL certificate key info here)
+      -----END RSA PRIVATE KEY-----
+    vault_jenkins_admin_password: <type a password here>
+
+    Save the file in the text editor and then verify the encryption.
+
+    If you wish, you can create another file called ".vault_pass.txt". Store this file in the /ansible/playbooks directory. This file should contain the vault password on a line by itself. If you do not wish to store the vault password on disk, then you must modify the playbook file /ansible/playbooks/jenkins-master.yml and remove the command reference to the file. You can ask interactively for the password or store the password file elsewhere. For more details, consult the [Ansible Vault](https://docs.ansible.com/ansible/playbooks_vault.html) documentation.
 
 ## Deployment
 
