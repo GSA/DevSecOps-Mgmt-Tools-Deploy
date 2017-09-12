@@ -1,0 +1,7 @@
+---
+- src: geerlingguy.jenkins
+- src: srsp.oracle-java
+- src: https://github.com/GSA/ansible-https-proxy
+  name: gsa.https-proxy
+- src: https://github.com/GSA/jenkins-deploy
+  name: gsa.jenkins

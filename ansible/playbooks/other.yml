@@ -1,0 +1,13 @@
+# hosts that Jenkins is going to run playbooks against
+- hosts: other
+  become: true
+  tasks:
+    - name: Create Jenkins user
+      user:
+        name: "{{ jenkins_ssh_user }}"
+        group: wheel
+    - name: Set up SSH key for Jenkins
+      authorized_key:
+        user: "{{ jenkins_ssh_user }}"
+        key: "{{ jenkins_ssh_public_key_data }}"
+    # ...other host setup tasks...

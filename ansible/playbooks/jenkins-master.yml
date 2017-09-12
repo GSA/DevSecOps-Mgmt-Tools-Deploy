@@ -1,0 +1,25 @@
+---
+- hosts: devsecops_mgmt_jenkins_master_eip
+  become: true
+  name: Set up Jenkins
+  # TODO: Vars are not being read automatically via hosts, so declaring them manually. Shouldn't have to do this. Jenkins-specific vars do not belong in /group_vars/all since this repo is for more than just Jenkins.
+  vars_files:
+    - ../group_vars/devsecops_mgmt_jenkins_master_eip/vars.yml
+    - ../group_vars/devsecops_mgmt_jenkins_master_eip/vault.yml
+  pre_tasks:
+    - set_fact:
+        jenkins_external_hostname: "{{ inventory_hostname }}"
+  roles:
+    - gsa.jenkins
+  tasks:
+
+    - name: Install jenkins_job dependencies
+      yum:
+        name: python-lxml
+
+    - name: Set up pipeline
+      jenkins_job:
+        config: "{{ lookup('file', 'files/job.xml') }}"
+        name: test-auto
+        user: "{{ jenkins_admin_username }}"
+        password: "{{ jenkins_admin_password }}"
