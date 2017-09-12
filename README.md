@@ -96,9 +96,10 @@ If youâ€™ve already deployed the DevSecOps-Infrastructure repo, chances are youâ
     jenkins_ssh_user: <username for ssh user>
     jenkins_ssh_public_key_data: |
     <public-key-data-from-above-steps>
+    jenkins_java_options: 
     ````
 
-    Note the use of variables preceded by "vault." These variables must be defined in another file in this same directory. Create a new file called "vault.yml" with ansible-vault:
+    "jenkins_java_options" overrides the geerlingguy.jenkins role to specify java_opt to pass along to Jenkins when running. Set heapsize or other options here, if they are needed. Note the use of variables preceded by "vault." These variables must be defined in another file in this same directory. Create a new file called "vault.yml" with ansible-vault:
 
     ````
     ansible-vault create vault.yml
