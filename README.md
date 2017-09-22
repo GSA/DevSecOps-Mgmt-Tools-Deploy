@@ -1,4 +1,5 @@
 # DevSecOps-Mgmt-Tools-Deploy
+
 Base deployment for future DevSecOps environment management tools in AWS
 
 This project implements the management toolset for a DevSecOps infrastructure. This deployment pairs well with [DevSecOps-Infrastructure](https://github.com/GSA/DevSecOps-Infrastructure). This repo can be used against your own environment by setting the variables the way you want them, or left to the defaults to read a terraform remote state backend and deploy automatically to an environment that was created with the sister deployment.
@@ -31,7 +32,7 @@ If you’ve already deployed the DevSecOps-Infrastructure repo, chances are you�
     * [Terraform](https://www.terraform.io/)
     * [Ansible](http://www.ansible.com/)
     * [Terraform-Inventory](https://github.com/adammck/terraform-inventory)
-         
+
 1. Set up the Terraform backend for this deployment. Note that this is a different backend from others. We’ll refer to the remote state backend later. You will need to replace your bucket name with something unique, because bucket names must be unique per-region. If you get an error that the bucket name is not available, then your choice was not unique. Remember this bucket name, you’ll need it later.
 
     ```sh
@@ -72,7 +73,7 @@ If you’ve already deployed the DevSecOps-Infrastructure repo, chances are you�
 
 * Set up the required variables files that are specific to Jenkins/Ansible. Create the following directories:
 
-    ````
+    ````sh
     /ansible/group_vars
                 |
                 /all
@@ -84,7 +85,7 @@ If you’ve already deployed the DevSecOps-Infrastructure repo, chances are you�
 
     Fill out the file with the following data:
 
-    ````
+    ````sh
     # group_vars/devsecops_mgmt_jenkins_master_eip/vars.yml
     jenkins_external_hostname: <some-fqdn-hostname>
     jenkins_ssh_key_passphrase: "{{ vault_jenkins_ssh_key_passphrase }}"
@@ -96,17 +97,18 @@ If you’ve already deployed the DevSecOps-Infrastructure repo, chances are you�
     jenkins_ssh_user: <username for ssh user>
     jenkins_ssh_public_key_data: |
     <public-key-data-from-above-steps>
+    jenkins_java_options:
     ````
 
-    Note the use of variables preceded by "vault." These variables must be defined in another file in this same directory. Create a new file called "vault.yml" with ansible-vault:
+    "jenkins_java_options" overrides the geerlingguy.jenkins role to specify java_opt to pass along to Jenkins when running. Set heapsize or other options here, if they are needed. Note the use of variables preceded by "vault." These variables must be defined in another file in this same directory. Create a new file called "vault.yml" with ansible-vault:
 
-    ````
+    ````sh
     ansible-vault create vault.yml
     ````
 
     This command will ask for a password to encrypt the file and launch a text editor (likely vi). Fill out the variables like the example below.
 
-    ````
+    ````sh
     # group_vars/devsecops_mgmt_jenkins_master_eip/vault.yml (encrypted)
     vault_jenkins_ssh_key_passphrase: ...(if one was used)
     vault_jenkins_ssh_private_key_data: |
@@ -132,7 +134,7 @@ If you’ve already deployed the DevSecOps-Infrastructure repo, chances are you�
 
 For initial deployment, use the ansible make file to make things easier.
 
-1. Set up environment. For your convenience, terraform commands are provided in the ansible Makefile. If you’re confident in your variable-fu, you can just kick off the “make” command and build the architecture from scratch. This will install all of the necessary roles, 
+1. Set up environment. For your convenience, terraform commands are provided in the ansible Makefile. If you’re confident in your variable-fu, you can just kick off the “make” command and build the architecture from scratch. This will install all of the necessary roles,
 
     ```sh
     cd ansible
