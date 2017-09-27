@@ -16,7 +16,7 @@ module "devsecops_mgmt_jenkins_master_instance" {
   subnet_id = "${var.jenkins_instance_subnet_id == "" ? data.terraform_remote_state.infrastructure_remote_state.mgmt_public_subnet_ids[0] : var.jenkins_instance_subnet_id}"
   vpc_security_group_ids = ["${module.devsecops_mgmt_jenkins_networking.sg_id}"]
   key_name = "${var.jenkins_key_name}"
-  iam_instance_profile = "${aws_iam_instance_profile.jenkins_master_ec2_instance_profile.id}"
+  iam_instance_profile = "${module.jenkins_master_role.profile_name}"
   jenkins_name = "${var.jenkins_master_name}"
   vm_user = "${var.jenkins_vm_user}"
 }
