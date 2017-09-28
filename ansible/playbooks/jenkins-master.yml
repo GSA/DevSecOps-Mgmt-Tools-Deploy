@@ -17,9 +17,9 @@
       yum:
         name: python-lxml
 
-    - name: Set up pipeline
+    - name: Set up metrics pipeline
       jenkins_job:
-        config: "{{ lookup('file', 'files/job.xml') }}"
-        name: test-auto
+        config: "{{ lookup('file', '../../jenkins-jobs/cloudwatch-metrics/job.xml') }}"
+        name: cloudwatch-metrics
         user: "{{ jenkins_admin_username }}"
         password: "{{ jenkins_admin_password }}"

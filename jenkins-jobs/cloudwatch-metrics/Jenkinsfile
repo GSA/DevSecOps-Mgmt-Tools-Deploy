@@ -1,0 +1,15 @@
+#!groovy
+
+pipeline {
+  agent any
+  triggers {
+    cron('H/5 * * * *')
+  }
+  stages {
+    stage('Publish Metrics') {
+      steps {
+        sh 'do something'
+      }
+    }
+  }
+}
