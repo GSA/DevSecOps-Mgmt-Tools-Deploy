@@ -21,7 +21,6 @@ module "devsecops_mgmt_jenkins_master_instance" {
   vm_user = "${var.jenkins_vm_user}"
 }
 
-# TODO: Need to be able to assign an EIP to the instance, rather than a public IP coming off the subnet
 resource "aws_eip" "devsecops_mgmt_jenkins_master_eip" {
   vpc = true
   instance = "${module.devsecops_mgmt_jenkins_master_instance.instance_id}"
@@ -44,4 +43,19 @@ resource "null_resource" "eip_connection_test" {
       "echo 'Remote execution to Elastic IP address succeeded.'"
     ]
   }
+}
+
+data "template_file" "backup_job_vars" {
+  template = "${file("${path.module}/../jenkins-jobs/jenkins-backup/job-tpl.xml")}"
+
+  vars {
+    jenkins_backup_s3_bucket = "${var.jenkins_backup_s3_bucket}"
+    jenkins_backup_s3_key = "${var.jenkins_backup_s3_key}"
+    region = "${var.region}"
+  }
+}
+
+resource "local_file" "backup_job_rendered_file" {
+    content = "${data.template_file.backup_job_vars.rendered}"
+    filename = "${path.module}/../jenkins-jobs/jenkins-backup/job.xml"
 }

@@ -90,3 +90,13 @@ variable "jenkins_vm_user" {
   type = "string"
   default = "ec2-user"
 }
+
+variable "jenkins_backup_s3_bucket" {
+  description = "Name of an S3 bucket to backup the jenkins configuration."
+  default = "devsecops-jenkins-master-backup"
+}
+
+variable "jenkins_backup_s3_key" {
+  description = "Folder key to use in the S3 backup bucket."
+  default = "jenkins_master_backup"
+}

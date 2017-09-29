@@ -11,6 +11,7 @@ secrets.yml
 *.pem
 ~$*
 *.pyc
+jenkins-jobs/jenkins-backup/job.xml
 
 ## Terraform ##
 *.tfvars
