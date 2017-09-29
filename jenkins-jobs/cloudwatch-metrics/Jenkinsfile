@@ -5,10 +5,20 @@ pipeline {
   triggers {
     cron('H/5 * * * *')
   }
+  tools {
+      maven 'Maven 3.5.0'
+      jdk 'jdk8'
+  }
   stages {
-    stage('Publish Metrics') {
+    stage('Build and Publish Metric') {
       steps {
-        sh 'do something'
+        sh 'mvn clean'
+        sh 'mvn -Dmaven.test.failure.ignore=true package'
+      }
+      post {
+        success {
+          sh 'java -jar target/cloudwatch-metrics-1.0-jar-with-dependencies.jar'
+        }
       }
     }
   }
