@@ -44,3 +44,9 @@ jenkins_master_private_dns = “jenkins-master.devsecops.local”
 
 # Login for the initial user on the EC2 instance
 vm_user = "ec2-user"
+
+# S3 bucket to store backup files for the backup job
+jenkins_backup_s3_bucket = "devsecops-jenkins-master-backup"
+
+# S3 bucket key to store backup files
+jenkins_backup_s3_key = "jenkins_backup_s3_key"
