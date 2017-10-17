@@ -12,17 +12,6 @@
   roles:
     - gsa.jenkins
   tasks:
-
-    - name: Set YUM repos for AWSCLI
-      yum_repository:
-        name: rhui-REGION-rhel-server-optional
-        description: rhel optional rpms
-        enabled: yes
-        mirrorlist: https://rhui2-cds01.REGION.aws.ce.redhat.com/pulp/mirror/content/dist/rhel/rhui/server/7/$releasever/$basearch/optional/os
-
-    - name: Install AWSCLI
-      yum:
-        name: awscli
     
     - name: Install jenkins_job dependencies
       yum:
