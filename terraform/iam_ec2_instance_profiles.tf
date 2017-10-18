@@ -1,23 +1,17 @@
-resource "aws_iam_role" "jenkins_master_ec2_role" {
-    name = "${var.jenkins_iam_role_name}"
-    assume_role_policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": "sts:AssumeRole",
-            "Principal": {
-            "Service": "ec2.amazonaws.com"
-            },
-                "Effect": "Allow",
-            "Sid": ""
-        }
-    ]
-}
-EOF
+module "jenkins_master_role" {
+    source = "github.com/18F/cg-provision/terraform/modules/iam_role"
+    role_name = "${var.jenkins_iam_role_name}"
 }
 
-resource "aws_iam_instance_profile" "jenkins_master_ec2_instance_profile" {
-    name = "jenkins_master_ec2_instance_profile"
-    role = "${aws_iam_role.jenkins_master_ec2_role.name}"
+module "cloudwatch_policy" {
+    source = "github.com/GSA/DevSecOps-Infrastructure/terraform/modules/iam_role_policy/cloudwatch"
+    policy_name = "${var.jenkins_master_name}-cloudwatch"
+}
+
+resource "aws_iam_policy_attachment" "cloudwatch" {
+name = "${var.jenkins_master_name}-cloudwatch"
+  policy_arn = "${module.cloudwatch_policy.arn}"
+  roles = [
+    "${module.jenkins_master_role.role_name}"
+  ]
 }
